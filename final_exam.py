@@ -125,13 +125,13 @@ df['LTV_cat'] = pd.cut(df['LTV'], bins=ltv_bins, labels=ltv_labels, right=False)
 
 
 # Group by 'Job Role' and calculate the sum and count of 'Attrition'
-attrition_summary = df.groupby('Job Satisfaction')['Attrition'].agg(['sum', 'count'])
+summary = df.groupby('ColumnCheck')['Output'].agg(['sum', 'count'])
 
 # Calculate the percentage of attrition (1s) in each job role
-attrition_summary['Attrition_Percentage'] = (attrition_summary['sum'] / attrition_summary['count']) * 100
+summary['Output_Percentage'] = (summary['sum'] / summary['count']) * 100
 
 # Display the result
-print(attrition_summary[['Attrition_Percentage']])
+print(summary[['Output_Percentage']])
 
 
 
@@ -338,3 +338,83 @@ else:
 for column in categorical_columns:
     unique_values = X_train[column].unique()
     print(f"Column: {column}, Unique Values: {unique_values}")
+
+
+
+
+# Grid Search Params for All Models:
+
+param_grids = {
+    'Logistic Regression': {
+        'classifier__C': [0.1, 1, 10],
+        'classifier__solver': ['lbfgs', 'liblinear']
+    },
+    'KNN': {
+        'classifier__n_neighbors': [3, 5, 7],
+        'classifier__weights': ['uniform', 'distance']
+    },
+    'Naive Bayes': {
+        # GaussianNB doesn't have hyperparameters typically tuned via GridSearch
+    },
+    'Decision Tree': {
+        'classifier__max_depth': [None, 10, 20, 30],
+        'classifier__min_samples_split': [2, 5, 10]
+    },
+    'Random Forest': {
+        'classifier__n_estimators': [100, 200, 300],
+        'classifier__max_depth': [None, 10, 20, 30]
+    },
+    'SVM': {
+        'classifier__C': [0.1, 1, 10],
+        'classifier__kernel': ['linear', 'rbf']
+    }
+}
+
+
+# GridSearch Run (Swap Models & Params)
+
+def run_grid_search(pipeline, param_grid, X_train, y_train):
+    """
+    Run GridSearchCV on the provided pipeline and parameter grid.
+
+    Parameters:
+    - pipeline: sklearn.pipeline.Pipeline object with preprocessor and model
+    - param_grid: dict, parameter grid for GridSearchCV
+    - X_train: Training features
+    - y_train: Training labels
+
+    Returns:
+    - best_estimator: Best model from GridSearchCV
+    - best_params: Best parameters from GridSearchCV
+    - best_score: Best score achieved by the best model
+    """
+    grid_search = GridSearchCV(pipeline, param_grid, cv=5, scoring='f1_weighted', n_jobs=-1)
+    grid_search.fit(X_train, y_train)
+    
+    best_estimator = grid_search.best_estimator_
+    best_params = grid_search.best_params_
+    best_score = grid_search.best_score_
+    
+    return best_estimator, best_params, best_score
+
+# Assuming 'preprocessor' is defined and 'X_train', 'y_train' are your training data
+
+# Replace with your selected model and corresponding parameter grid
+selected_model = RandomForestClassifier() # Put model you want to use here
+param_grid = {
+    'classifier__n_estimators': [100, 200, 300], # Change Params using above listed arrays
+    'classifier__max_depth': [None, 10, 20, 30]
+}
+
+# Create a pipeline with the selected model
+pipeline = Pipeline(steps=[
+    ('preprocessor', preprocessor),
+    ('classifier', selected_model)
+])
+
+# Run grid search
+best_estimator, best_params, best_score = run_grid_search(pipeline, param_grid, X_train, y_train)
+
+print("Best Estimator:", best_estimator) # Output gives Model with Parameters assigned
+print("Best Parameters:", best_params)
+print("Best Score:", best_score)
