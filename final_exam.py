@@ -140,7 +140,27 @@ for name, model in models.items():
     scores = cross_val_score(pipeline, X_train, y_train, scoring='f1_weighted', cv=3,n_jobs=-1)
     print(f"{name} F1 Scores (weighted): {scores.mean():.3f} ± {scores.std():.3f}")
 
-# Logreg Pipeline
+
+
+# Binary Log Reg Pipeline
+
+# Define the Logistic Regression model
+logreg = LogisticRegression(max_iter=1000)
+
+# Create the full pipeline
+pipeline = Pipeline(steps=[
+    ('preprocessor', preprocessor),
+    ('classifier', logreg)
+])
+
+# Fit the model to the training data
+pipeline.fit(X_train, y_train)
+
+y_pred = pipeline.predict(X_test)
+print(classification_report(y_test, y_pred))
+
+
+# Logreg Pipeline - Multi-Class
 
 logreg_pipeline = Pipeline(steps=[
     ('preprocessor', preprocessor),
@@ -166,6 +186,72 @@ print(f"Accuracy: {accuracy:.2f}")
 print(f"Precision: {precision:.2f}")
 print(f"Recall: {recall:.2f}")
 print(f"F1 Score: {f1:.2f}")
+
+# Plot the confusion matrix using seaborn
+plt.figure(figsize=(10, 7))
+sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, fmt='d', cmap='Blues')
+plt.xlabel('Predicted')
+plt.ylabel('Actual')
+plt.title('Confusion Matrix')
+plt.show()
+
+
+# KNN
+
+# KNN
+KNN = KNeighborsClassifier()
+
+# Create the full pipeline
+pipeline = Pipeline(steps=[
+    ('preprocessor', preprocessor),
+    ('classifier', KNN)
+])
+
+# Split data into training and test sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+
+# Fit the model to the training data
+pipeline.fit(X_train, y_train)
+
+y_pred = pipeline.predict(X_test)
+print(classification_report(y_test, y_pred))
+
+# Plot the confusion matrix using seaborn
+plt.figure(figsize=(8, 5))
+sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, fmt='d', cmap='Blues')
+plt.xlabel('Predicted')
+plt.ylabel('Actual')
+plt.title('Confusion Matrix')
+plt.show()
+
+
+# Random Forest
+
+# Define the preprocessor with OneHotEncoder for categorical features and MinMaxScaler for numerical features
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', MinMaxScaler(), numeric_columns),
+        ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_columns)
+    ]
+)
+
+# Split data into training and test sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+
+# Create a pipeline with the preprocessor and a RandomForestClassifier
+pipeline_rforest_rev = Pipeline(steps=[
+    ('preprocessor', preprocessor),
+    ('classifier', RandomForestClassifier(n_estimators=100))
+])
+
+# Train the model
+pipeline_rforest_rev.fit(X_train, y_train)
+
+# Make predictions
+y_pred = pipeline_rforest_rev.predict(X_test)
+
+# Evaluate the model
+print(classification_report(y_test, y_pred))
 
 # Plot the confusion matrix using seaborn
 plt.figure(figsize=(10, 7))
