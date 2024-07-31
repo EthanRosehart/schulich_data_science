@@ -32,6 +32,9 @@ from imblearn.pipeline import Pipeline as ImbPipeline
 
 from xgboost import XGBClassifier
 
+
+# EDA
+
 df = pd.read_csv('')
 
 df.head()
@@ -77,23 +80,39 @@ plt.ylabel('Number of Cancellations')
 plt.xticks(rotation=45)
 plt.show()
 
+# FEATURE ENGINEERING
+
+# Convert 'Yes' to 1 and 'No' to 0
+df['Attrition'] = df['Attrition'].map({'Yes': 1, 'No': 0})
+
+
+
 # Calculate the 99th percentile of the 'transaction_amount' column
 percentile_99 = df['LTV'].quantile(0.99)
+
+
 
 # Replace values above the 99th percentile with the 99th percentile value
 df['LTV'] = df['LTV'].apply(lambda x: min(x, percentile_99))
 
+
+
 # Define the age bins and labels
 bins = [18, 35, 50, 65, float('inf')]
 labels = ['18-34', '35-49', '50-64', '65+']
+
+
 
 # Create the age bins and label them
 df['age_bins'] = pd.cut(df['age'], bins=bins, labels=labels, right=False)
 
 df['age_bins'].value_counts()
 
+
+
 # Create column to track customer_lifespan
 df['customer_lifespan'] = df['last_purchase_date'] - df['join_date']
+
 
 # We want to predict ranges of LTV for better use in model output
 
@@ -102,7 +121,25 @@ ltv_bins = [0, 7134.53, 10324.62, float('inf')]
 ltv_labels = ['Low', 'Medium', 'High']
 
 # Create the LTV_cat column in the transaction_level DataFrame
-transaction_level['LTV_cat'] = pd.cut(transaction_level['LTV'], bins=ltv_bins, labels=ltv_labels, right=False)
+df['LTV_cat'] = pd.cut(df['LTV'], bins=ltv_bins, labels=ltv_labels, right=False)
+
+
+# Group by 'Job Role' and calculate the sum and count of 'Attrition'
+attrition_summary = df.groupby('Job Satisfaction')['Attrition'].agg(['sum', 'count'])
+
+# Calculate the percentage of attrition (1s) in each job role
+attrition_summary['Attrition_Percentage'] = (attrition_summary['sum'] / attrition_summary['count']) * 100
+
+# Display the result
+print(attrition_summary[['Attrition_Percentage']])
+
+
+
+
+
+
+
+# MODELLING
 
 # Split Data for Model
 
@@ -129,7 +166,8 @@ models = {
     'KNN': KNeighborsClassifier(),
     'Naive Bayes': GaussianNB(),
     'Decision Tree': DecisionTreeClassifier(),
-    'Random Forest': RandomForestClassifier()
+    'Random Forest': RandomForestClassifier(),
+    'SVM': SVC()
 }
 
 # Evaluate each model using cross-validation
@@ -165,7 +203,7 @@ print(classification_report(y_test, y_pred))
 
 logreg_pipeline = Pipeline(steps=[
     ('preprocessor', preprocessor),
-    ('classifier', LogisticRegression(max_iter=1000,penalty='l2', solver='lbfgs'))
+    ('classifier', LogisticRegression(max_iter=1000))
 ])
 
 logreg_pipeline.fit(X_train, y_train)
@@ -174,7 +212,7 @@ logreg_pipeline.fit(X_train, y_train)
 y_pred = logreg_pipeline.predict(X_test)
 
 # Generate the classification report
-report = classification_report(y_test, y_pred, target_names=['Low', 'Medium', 'High'])
+report = classification_report(y_test, y_pred) 
 print("Classification Report:\n", report)
 
 # Compute and print individual metrics
