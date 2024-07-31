@@ -351,7 +351,8 @@ param_grids = {
     },
     'KNN': {
         'classifier__n_neighbors': [3, 5, 7],
-        'classifier__weights': ['uniform', 'distance']
+        'classifier__weights': ['uniform', 'distance'],
+        'classifier__metric': ['euclidean', 'manhattan', 'minkowski']  # Common distance metrics
     },
     'Naive Bayes': {
         # GaussianNB doesn't have hyperparameters typically tuned via GridSearch
