@@ -7,7 +7,7 @@ import gurobipy as gb
 
 # Should we implement a variable pricing scheme?
 isVariablePricing = True
-isInteger = True
+isInteger = False 
 
 # Linear price response functions (intercept, slope)
 response = [[3100, 62], [1900, 50], [1700, 40], [1710, 42], [2000, 53], [2500, 54], [3300, 60]]

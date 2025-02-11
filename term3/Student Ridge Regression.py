@@ -9,7 +9,7 @@ import pandas as pd
 import numpy as np
 
 # Load the training data
-train_file = "Student Ridge Regression - Training Data.xlsx"
+train_file = "https://github.com/EthanRosehart/schulich_data_science/raw/refs/heads/main/term3/Student%20Ridge%20Regression%20-%20Training%20Data.xlsx"
 train_data = pd.read_excel(train_file)
 
 # Define the features and outcome columns
@@ -18,7 +18,7 @@ X_train = train_data.drop(columns=['Grade']).values  # feature matrix
 N, J = X_train.shape                                 # number of training instances (N) and features (J)
 
 # Budget constraint for regularization
-t = 0.01
+t = 2 # Test different values - term too high - restricts learning - too low
 
 # Create a new Gurobi model
 model = gp.Model("Ridge Regression")
@@ -50,7 +50,7 @@ lhs = sum(beta[j].X ** 2 for j in range(J))
 print(f'Budget constraint slack: {t - lhs}')
 
 # Load the testing data
-test_file = "Student Ridge Regression - Testing Data.xlsx"
+test_file = "https://github.com/EthanRosehart/schulich_data_science/raw/refs/heads/main/term3/Student%20Ridge%20Regression%20-%20Testing%20Data.xlsx"
 test_data = pd.read_excel(test_file)
 
 # Define the features and outcome columns for testing data
