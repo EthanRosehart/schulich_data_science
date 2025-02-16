@@ -9,7 +9,7 @@ from gurobipy import GRB
 model = gb.Model("Assembly Line Scheduling ")
 
 # Variables
-x = model.addVars(7, lb=0, vtype=GRB.INTEGER, name="Shift Variable")
+x = model.addVars(7, lb=0, vtype=GRB.INTEGER, name="Shift Variable") # Integer parameter
 
 # Objective function
 objective = 680 * x[0] + 705 * x[1] + 705 * x[2] + 705 * x[3] + 705 * x[4] + 680 * x[5] + 655 * x[6]
