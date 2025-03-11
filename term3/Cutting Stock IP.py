@@ -10,7 +10,7 @@ import gurobipy as gp
 from gurobipy import GRB
 
 # Load the data from the CSV file
-data_file = 'cutting_stock_data.csv'
+data_file = 'https://raw.githubusercontent.com/EthanRosehart/schulich_data_science/refs/heads/main/term3/cutting_stock_data.csv'
 data = pd.read_csv(data_file)
 
 # Extract the order lengths and demands from the CSV file

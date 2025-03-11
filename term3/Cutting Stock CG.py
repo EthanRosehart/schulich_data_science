@@ -110,7 +110,7 @@ def solve_integer_master_problem(patterns, order_lens, demands, roll_len):
 # Script to read data and solve the problem
 if __name__ == "__main__":
     # Load instance from CSV (CSV format: roll_len, order_len, demand columns)
-    csv_file = "cutting_stock_data.csv"
+    csv_file = "https://raw.githubusercontent.com/EthanRosehart/schulich_data_science/refs/heads/main/term3/cutting_stock_data.csv"
     roll_len, order_lens, demands, num_orders = load_instance_from_csv(csv_file)
     
     # Run column generation and solve the final integer problem

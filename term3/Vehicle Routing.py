@@ -10,7 +10,7 @@ from itertools import permutations
 
 # ----------------------------------------------------------------------------------------
 # Read the travel time data from the csv file
-hubs = pd.read_csv("hubs.csv", converters={'key': ast.literal_eval})
+hubs = pd.read_csv("https://raw.githubusercontent.com/EthanRosehart/schulich_data_science/refs/heads/main/term3/hubs.csv", converters={'key': ast.literal_eval})
 time = dict(zip(hubs['key'], hubs['value']))
 
 # Parameters including the number of vehicles, customers to visit, and total shift time.
