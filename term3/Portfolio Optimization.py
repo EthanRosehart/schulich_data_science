@@ -19,8 +19,8 @@ READ_FILES = True
 if READ_FILES:
 
     # Read the closing prices and ticker symbols
-    df = pd.read_csv("stock_closing_prices.csv")
-    symbols = pd.read_csv("symbols.csv")
+    df = pd.read_csv("https://raw.githubusercontent.com/EthanRosehart/schulich_data_science/refs/heads/main/term3/stock_closing_prices.csv")
+    symbols = pd.read_csv("https://raw.githubusercontent.com/EthanRosehart/schulich_data_science/refs/heads/main/term3/symbols.csv")
     stocks = symbols["Symbol"].values.tolist()
 
     # Matrix of daily closing prices for each stock in the S&P 500
