@@ -36,7 +36,7 @@ def simulate_monthly_sales(selling_weeks_left, target, trials=2000):
     # Return the probability that the target is achieved over all trials
     return target_achieved/trials
 
-trials = 10000
+trials = 100000
 prob = simulate_monthly_sales(9, 187000, trials)
 print("The probability is %2.3f." % prob)    
 

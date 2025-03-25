@@ -20,7 +20,7 @@ T = 1.0      # the time to maturity
 K = 1500000  # the strike price
 
 # The number of trials to perform
-TRIALS = 10000
+TRIALS = 1000000
 totalPrice = 0
 totalPriceSquared = 0
 

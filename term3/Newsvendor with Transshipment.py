@@ -9,8 +9,8 @@ import pandas as pd
 import numpy as np
 
 # Parameters
-df = pd.read_csv('distributions.csv')
-c = pd.read_csv('cost_matrix.csv').values
+df = pd.read_csv('https://raw.githubusercontent.com/EthanRosehart/schulich_data_science/refs/heads/main/term3/distributions.csv')
+c = pd.read_csv('https://raw.githubusercontent.com/EthanRosehart/schulich_data_science/refs/heads/main/term3/cost_matrix.csv').values
 n = len(df)
 
 # The sum of all objectives and decision variables
