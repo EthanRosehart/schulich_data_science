@@ -1,4 +1,4 @@
-# Part D - Integer Shipping, 10-Year Horizon, WITH Constraints (1–8)
+# Part D - Integer Shipping, 10-Year Horizon, WITH Constraints (1–8) WITHIN 5% OPTIMAL
 
 import gurobipy as gp
 from gurobipy import GRB
@@ -102,14 +102,12 @@ for i in facility_list:
 
 #--- 5) Solve -----------------------------------------------------------
 m.setParam('OutputFlag', 1)
-m.setParam("PoolGap", 0.01)  # store solutions within 1% of best
-m.setParam("PoolSearchMode", 2)     # 2 = Comprehensive search for solutions
-m.setParam("PoolSolutions", 100000)    # or however many solutions you'd like to store
+m.setParam("MIPGap", 0.05)
 m.optimize()
 
 #--- 6) Output ----------------------------------------------------------
 if m.status == GRB.OPTIMAL:
-    print(f"\nOptimal 10-year Profit (ALL constraints, integer shipping): {m.objVal:,.2f}\n")
+    print(f"\nObjective value (within ~5%) 10-year Profit (ALL constraints, integer shipping): {m.objVal:,.2f}\n")
     
     for i in facility_list:
         if y[i].X > 0.5:
@@ -121,33 +119,3 @@ if m.status == GRB.OPTIMAL:
             print(f"  Fixed cost: ${fixed_cost_dict[i]:,.2f}\n")
 else:
     print("No optimal solution found.")
-
-# --- 7) Solution Pool ---------------------------------------------------
-# Suppose the model is already optimized with PoolSearchMode and PoolSolutions set
-if m.Status == GRB.OPTIMAL or m.Status == GRB.INT_OPTIMAL:
-    bestObj = m.ObjVal
-    nSolutions = m.SolCount   # total solutions stored in the solution pool
-
-    within_1pct = []
-    
-    # Iterate over each solution in the pool
-    for k in range(nSolutions):
-        m.Params.SolutionNumber = k
-        obj_k = m.PoolObjVal    # the objective value of solution k
-        # Check if it's within 1% of the best
-        if obj_k >= 0.99 * bestObj:
-            within_1pct.append(obj_k)
-    
-    # Now, how many solutions are within 1% of the best?
-    count_within_1pct = len(within_1pct)
-    # And what's the smallest among them?
-    if count_within_1pct > 0:
-        smallest_within_1pct = min(within_1pct)
-    else:
-        smallest_within_1pct = None
-
-    print(f"\nNumber of feasible solutions within 1% of optimal: {count_within_1pct}")
-    if smallest_within_1pct is not None:
-        print(f"Smallest objective value among those solutions: {smallest_within_1pct:,.2f}")
-    else:
-        print("No solutions found within 1% of the best objective.")
